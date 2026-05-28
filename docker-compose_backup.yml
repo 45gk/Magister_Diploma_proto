@@ -1,0 +1,124 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    env_file: .env
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gpdb:
+    build:
+      context: ./greenplum
+    env_file: .env
+    environment:
+      GREENPLUM_DB: ${POSTGRES_DB}
+      GREENPLUM_USER: ${POSTGRES_USER}
+      GREENPLUM_PASSWORD: ${POSTGRES_PASSWORD}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - gp_data:/greenplum
+      - ./scripts/init_data_vault.sql:/docker-entrypoint-initdb.d/init_data_vault.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=$${GREENPLUM_PASSWORD} psql -h localhost -p 5432 -U $${GREENPLUM_USER} -d $${GREENPLUM_DB} -c \"select 1;\""]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ./webapp
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mlservice:
+        condition: service_started
+      agentservice:
+        condition: service_started
+
+  mlservice:
+    build:
+      context: ./mlservice
+    env_file: .env
+    ports:
+      - "8001:8001"
+
+  agentservice:
+    build:
+      context: ./agentservice
+    env_file: .env
+    ports:
+      - "8002:8002"
+
+  airflow:
+    build:
+      context: ./airflow
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      SPARK_MASTER_URL: spark://spark-master:7077
+    command: >
+      bash -c "
+      pip install --no-cache-dir 'apache-airflow-providers-apache-spark<5.0.0' &&
+      airflow db migrate &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+      airflow standalone
+      "
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
+    depends_on:
+      db:
+        condition: service_healthy
+      spark-master:
+        condition: service_started
+
+  spark-master:
+    image: apache/spark:3.4.1
+    entrypoint: /opt/spark/bin/spark-class
+    command: org.apache.spark.deploy.master.Master
+    ports:
+      - "7077:7077"
+      - "4040:4040"
+    environment:
+      SPARK_MASTER_HOST: spark-master
+      SPARK_MASTER_PORT: 7077
+      SPARK_MASTER_WEBUI_PORT: 4040
+    volumes:
+      - spark_data:/tmp/spark-events
+
+  spark-worker:
+    image: apache/spark:3.4.1
+    entrypoint: /opt/spark/bin/spark-class
+    command: org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    environment:
+      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_MEMORY: 512m
+      SPARK_WORKER_WEBUI_PORT: 8081
+    depends_on:
+      - spark-master
+    volumes:
+      - spark_data:/tmp/spark-events
+
+volumes:
+  pg_data:
+  gp_data:
+  airflow_logs:
+  spark_data:

@@ -1,0 +1,172 @@
+{% extends "credit/base.html" %}
+
+{% block title %}Создание новой заявки{% endblock %}
+
+{% block content %}
+<h2>Создание новой кредитной заявки</h2>
+
+<form method="post" class="form">
+    {% csrf_token %}
+    
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Информация о клиенте</h3>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_education">Образование:</label>
+                <select name="education" id="id_education" required>
+                    <option value="">Выберите образование</option>
+                    <option value="secondary">Среднее</option>
+                    <option value="secondary_special">Среднее специальное</option>
+                    <option value="higher">Высшее</option>
+                    <option value="incomplete_higher">Неполное высшее</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_sex">Пол:</label>
+                <select name="sex" id="id_sex" required>
+                    <option value="">Выберите пол</option>
+                    <option value="M">Мужчина</option>
+                    <option value="F">Женщина</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_age">Возраст:</label>
+                <input type="number" name="age" id="id_age" min="18" max="120" required>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_income">Ежемесячный доход (руб.):</label>
+                <input type="number" name="income" id="id_income" step="1000" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_car">Наличие автомобиля:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="car" value="True" id="id_car_yes"> Да
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="car" value="False" id="id_car_no" checked> Нет
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_car_type">Тип автомобиля:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="car_type" value="True" id="id_car_type_own"> Личный
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="car_type" value="False" id="id_car_type_other" checked> Другой
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_foreign_passport">Zagranichny passport:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="foreign_passport" value="True" id="id_fp_yes"> Да
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="foreign_passport" value="False" id="id_fp_no" checked> Нет
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+            <h3 class="card-title">Финансовый профиль</h3>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_decline_app_cnt">Количество отклоненных заявок:</label>
+                <input type="number" name="decline_app_cnt" id="id_decline_app_cnt" min="0" value="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_good_work">Хорошее место работы:</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="good_work" value="True" id="id_good_work_yes"> Да
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="good_work" value="False" id="id_good_work_no" checked> Нет
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_bki_request_cnt">Количество запросов БКИ:</label>
+                <input type="number" name="bki_request_cnt" id="id_bki_request_cnt" min="0" value="0">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_region_rating">Рейтинг региона:</label>
+            <input type="number" name="region_rating" id="id_region_rating" step="0.01" min="0" max="100">
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+            <h3 class="card-title">Поведенческий контекст</h3>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_home_address">Адрес проживания:</label>
+                <input type="text" name="home_address" id="id_home_address">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_work_address">Адрес работы:</label>
+                <input type="text" name="work_address" id="id_work_address">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_sna">SNA (Social Network Address):</label>
+                <input type="text" name="sna" id="id_sna">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_first_time">Первая заявка:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="radio" name="first_time" value="True" id="id_first_time_yes" checked> Да
+                </div>
+                <div class="checkbox-item">
+                    <input type="radio" name="first_time" value="False" id="id_first_time_no"> Нет
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <button type="submit">✓ Создать заявку</button>
+        <a href="{% url 'credit:applications-list' %}">
+            <button type="button" class="btn-secondary">Отмена</button>
+        </a>
+    </div>
+</form>
+
+<style>
+form button {
+    margin: 0 10px;
+}
+</style>
+{% endblock %}

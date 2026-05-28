@@ -1,0 +1,97 @@
+{% extends "credit/base.html" %}
+
+{% block title %}Статус системы{% endblock %}
+
+{% block content %}
+<h2>Статус системы</h2>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value" style="color: {% if health.web %}#28a745{% else %}#dc3545{% endif %};">
+            {% if health.web %}✓{% else %}✗{% endif %}
+        </div>
+        <div class="stat-label">Web API</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: {% if health.database %}#28a745{% else %}#dc3545{% endif %};">
+            {% if health.database %}✓{% else %}✗{% endif %}
+        </div>
+        <div class="stat-label">База данных</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: {% if health.ml_service %}#28a745{% else %}#dc3545{% endif %};">
+            {% if health.ml_service %}✓{% else %}✗{% endif %}
+        </div>
+        <div class="stat-label">ML Service</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" style="color: {% if health.agent_service %}#28a745{% else %}#dc3545{% endif %};">
+            {% if health.agent_service %}✓{% else %}✗{% endif %}
+        </div>
+        <div class="stat-label">Agent Service</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Детали</h3>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <strong>Web API:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.web %}
+                <span style="color: #28a745;">✓ Работает нормально</span>
+            {% else %}
+                <span style="color: #dc3545;">✗ Недоступно</span>
+            {% endif %}
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <strong>База данных:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.database %}
+                <span style="color: #28a745;">✓ Работает нормально</span>
+            {% else %}
+                <span style="color: #dc3545;">✗ Недоступна</span>
+                <span style="display: block; margin-top: 5px; font-size: 12px; color: #999;">
+                    Проверьте подключение PostgreSQL
+                </span>
+            {% endif %}
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <strong>ML Service:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.ml_service %}
+                <span style="color: #28a745;">✓ Работает нормально</span>
+            {% else %}
+                <span style="color: #dc3545;">✗ Недоступен</span>
+                <span style="display: block; margin-top: 5px; font-size: 12px; color: #999;">
+                    Проверьте, запущен ли контейнер mlservice
+                </span>
+            {% endif %}
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <strong>Agent Service:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.agent_service %}
+                <span style="color: #28a745;">✓ Работает нормально</span>
+            {% else %}
+                <span style="color: #dc3545;">✗ Недоступен</span>
+                <span style="display: block; margin-top: 5px; font-size: 12px; color: #999;">
+                    Проверьте, запущен ли контейнер agentservice
+                </span>
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div style="margin-top: 20px; text-align: center;">
+    <button onclick="location.reload()" class="btn-secondary">🔄 Обновить</button>
+</div>
+{% endblock %}

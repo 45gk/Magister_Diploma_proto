@@ -1,0 +1,43 @@
+{% extends "credit/base.html" %}
+
+{% block title %}Главная - Credit System{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; padding: 40px 0;">
+        <h2 style="color: #667eea; margin-bottom: 20px;">Добро пожаловать в систему рассчитання кредитных рисков</h2>
+        <p style="color: #666; font-size: 16px; margin-bottom: 30px;">
+            Система анализирует данные клиентов, рассчитывает вероятность дефолта 
+            и предоставляет рекомендации на основе ML-модели.
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">📋 Новая заявка</h3>
+                <p style="margin-bottom: 20px;">Создайте новую кредитную заявку и получите оценку риска</p>
+                <a href="/applications/new/" style="display: inline-block; background: white; color: #667eea; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">Начать</a>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">📊 Мои заявки</h3>
+                <p style="margin-bottom: 20px;">Просмотрите список всех ваших кредитных заявок</p>
+                <a href="/applications/" style="display: inline-block; background: white; color: #f5576c; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">Перейти</a>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 15px;">✅ Статус системы</h3>
+                <p style="margin-bottom: 20px;">Проверьте работоспособность всех сервисов</p>
+                <a href="/health/" style="display: inline-block; background: white; color: #00f2fe; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold;">Проверить</a>
+            </div>
+        </div>
+        
+        <div style="margin-top: 60px; padding: 30px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+            <h3 style="color: #333; margin-bottom: 15px;">📌 Как это работает?</h3>
+            <ol style="text-align: left; color: #666; line-height: 1.8; display: inline-block;">
+                <li style="margin-bottom: 10px;">Заполните форму с данными клиента (ФИ, возраст, доход и т.д.)</li>
+                <li style="margin-bottom: 10px;">Система рассчитает вероятность дефолта на основе ML-модели</li>
+                <li style="margin-bottom: 10px;">Получите детальное объяснение решения от AI-агента</li>
+                <li>Примите обоснованное решение по одобрению/отказу кредита</li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}

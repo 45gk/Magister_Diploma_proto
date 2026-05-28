@@ -46,5 +46,6 @@ class ScoringInfo(models.Model):
 class AgentExplanation(models.Model):
     application = models.OneToOneField(CreditApplication, on_delete=models.CASCADE, related_name='agent_explanation')
     mode = models.CharField(max_length=20, default='brief')
+    explanation = models.TextField(blank=True)
     payload = models.JSONField(default=dict)
     generated_at = models.DateTimeField(auto_now_add=True)

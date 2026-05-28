@@ -1,0 +1,83 @@
+{% extends "credit/base.html" %}
+
+{% block title %}Главная - Кредитный скоринг{% endblock %}
+
+{% block content %}
+<h2>Добро пожаловать в систему кредитного скоринга</h2>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-label">Всего заявок</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_clients }}</div>
+        <div class="stat-label">Клиентов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ scored_applications }}</div>
+        <div class="stat-label">Оценено</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">О системе</h3>
+    </div>
+    <p>Эта система предоставляет расширенное решение для управления кредитными заявками с интеграцией:</p>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li><strong>ML Скоринг:</strong> Предсказание вероятности дефолта на основе машинного обучения</li>
+        <li><strong>Агентское объяснение:</strong> ИИ-агент объясняет решение по скорингу</li>
+        <li><strong>Управление данными:</strong> Полная база данных клиентов и заявок</li>
+        <li><strong>История:</strong> Отслеживание всех операций и изменений</li>
+    </ul>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <p style="margin-bottom: 15px;">Начните работу с системой:</p>
+    <a href="{% url 'credit:applications-create' %}" style="display: inline-block; margin: 0 10px;">
+        <button>➕ Создать новую заявку</button>
+    </a>
+    <a href="{% url 'credit:applications-list' %}" style="display: inline-block; margin: 0 10px;">
+        <button class="btn-secondary">📋 Просмотреть заявки</button>
+    </a>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Последние заявки</h3>
+    </div>
+    {% if recent_applications %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in recent_applications %}
+                <tr>
+                    <td>#{{ app.id }}</td>
+                    <td>{{ app.app_date|date:"d.m.Y" }}</td>
+                    <td>
+                        {% if app.scoring %}
+                            <span class="badge badge-success">✓ Оценена</span>
+                        {% else %}
+                            <span class="badge badge-pending">⏳ На рассмотрении</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'credit:applications-detail' app.id %}">Подробнее →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; padding: 20px; color: #999;">Нет заявок. <a href="{% url 'credit:applications-create' %}">Создайте первую заявку</a></p>
+    {% endif %}
+</div>
+{% endblock %}
