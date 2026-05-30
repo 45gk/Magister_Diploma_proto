@@ -5,10 +5,10 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-airflow-with-java}
-  # build:
-  #   context: ./airflow
-  #   dockerfile: Dockerfile
+  # image: ${AIRFLOW_IMAGE_NAME:-airflow-with-java}
+  build:
+    context: ./airflow
+    dockerfile: Dockerfile
   # build: .
   environment:
     &airflow-common-env
@@ -55,6 +55,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./scripts/init_staging_home_credit.sql:/docker-entrypoint-initdb.d/02_staging_home_credit.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
@@ -104,6 +105,7 @@ services:
     volumes:
       - gp_data:/greenplum
       - ./scripts/init_data_vault.sql:/docker-entrypoint-initdb.d/init_data_vault.sql:ro
+      - ./scripts/init_data_vault_home_credit.sql:/docker-entrypoint-initdb.d/02_data_vault_home_credit.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "PGPASSWORD=$${GREENPLUM_PASSWORD} psql -h localhost -p 5432 -U $${GREENPLUM_USER} -d $${GREENPLUM_DB} -c \"select 1;\""]
       interval: 15s

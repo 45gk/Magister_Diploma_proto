@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Импорт CSV (_new)</title></head>
+<body>
+<h1>Загрузка банковских CSV (_new)</h1>
+<p>Home Credit / models_1. Мусорные поля ETL можно симулировать и сразу отбрасывать.</p>
+
+<h2>Один файл</h2>
+<form method="post" action="{% url 'credit_new:csv-upload' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <label>Тип выгрузки:
+    <select name="dataset_key" required>
+      {% for ds in datasets %}
+        <option value="{{ ds.key }}">{{ ds.key }} ({{ ds.filename }})</option>
+      {% endfor %}
+    </select>
+  </label><br><br>
+  <label>CSV: <input type="file" name="csv_file" accept=".csv" required></label><br><br>
+  <label><input type="checkbox" name="strip_junk" checked> Убрать мусорные поля ETL</label><br>
+  <label><input type="checkbox" name="enrich_junk"> Добавить мусор (симуляция АБС)</label><br>
+  <label>Лимит строк: <input type="number" name="limit" min="1" placeholder="все"></label><br><br>
+  <button type="submit">Загрузить</button>
+</form>
+
+<h2>Каталог (dev)</h2>
+<form method="post" action="{% url 'credit_new:csv-directory' %}">
+  {% csrf_token %}
+  <label>Путь: <input type="text" name="directory" size="60" placeholder="C:/data/home_credit"></label>
+  <button type="submit">Загрузить каталог (по 100 строк / файл)</button>
+</form>
+
+<p><a href="{% url 'credit_new:index' %}">На главную</a></p>
+</body>
+</html>

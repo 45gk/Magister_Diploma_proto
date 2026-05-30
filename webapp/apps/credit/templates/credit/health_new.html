@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Health (_new)</title></head>
+<body>
+<h1>Health check (_new)</h1>
+<ul>
+  <li>Web: {{ health.web }}</li>
+  <li>DB: {{ health.database }}</li>
+  <li>ML: {{ health.ml_service }}</li>
+  <li>Agent: {{ health.agent_service }}</li>
+</ul>
+<p><a href="{% url 'credit_new:index' %}">Назад</a></p>
+</body>
+</html>

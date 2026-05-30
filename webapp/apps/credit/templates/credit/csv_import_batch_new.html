@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Пакетный импорт (_new)</title></head>
+<body>
+<h1>Пакетная загрузка каталога</h1>
+<table border="1" cellpadding="4">
+  <tr><th>Dataset</th><th>Строк</th><th>OK</th><th>Ошибки</th></tr>
+  {% for s in summaries %}
+  <tr>
+    <td>{{ s.dataset }}</td>
+    <td>{{ s.row_count }}</td>
+    <td>{{ s.ok }}</td>
+    <td>{{ s.errors|join:", " }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p><a href="{% url 'credit_new:csv-import' %}">Назад</a></p>
+</body>
+</html>

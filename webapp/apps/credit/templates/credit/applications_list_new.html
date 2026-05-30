@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Заявки (_new)</title></head>
+<body>
+<h1>Заявки (_new)</h1>
+<ul>
+{% for app in applications %}
+  <li><a href="{% url 'credit_new:applications-detail' application_id=app.id %}">#{{ app.id }}</a> — {{ app.app_date }}</li>
+{% empty %}
+  <li>Нет заявок</li>
+{% endfor %}
+</ul>
+<p><a href="{% url 'credit_new:applications-create' %}">Создать</a> | <a href="{% url 'credit_new:index' %}">Назад</a></p>
+</body>
+</html>

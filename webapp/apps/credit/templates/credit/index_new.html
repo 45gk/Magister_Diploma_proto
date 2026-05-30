@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Главная (_new)</title></head>
+<body>
+<h1>Кредитный скоринг (_new)</h1>
+<p>Заявок: {{ total_applications }}, клиентов: {{ total_clients }}, со скорингом: {{ scored_applications }}</p>
+<p><a href="{% url 'credit_new:applications-list' %}">Список заявок</a> |
+   <a href="{% url 'credit_new:csv-import' %}">Импорт CSV</a> |
+   <a href="{% url 'credit_new:health' %}">Health</a></p>
+</body>
+</html>

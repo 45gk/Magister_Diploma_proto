@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>Новая заявка (_new)</title></head>
+<body>
+<h1>Создание заявки (_new)</h1>
+<form method="post">{% csrf_token %}
+  <p>Образец формы — подключите поля как в application_create.html</p>
+  <button type="submit">Сохранить</button>
+</form>
+<p><a href="{% url 'credit_new:applications-list' %}">К списку</a></p>
+</body>
+</html>
