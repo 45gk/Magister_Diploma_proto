@@ -118,6 +118,8 @@ services:
     env_file: .env
     ports:
       - "8000:8000"
+    # volumes:
+    #   - ./webapp:/app
     depends_on:
       db:
         condition: service_healthy

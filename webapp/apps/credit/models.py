@@ -208,7 +208,7 @@ class ApplicationTrain(models.Model):
 
     class Meta:
         db_table = 'src_application_train'
-        managed = False
+        managed = True
         verbose_name = 'Application (train)'
         verbose_name_plural = 'Applications (train)'
 
@@ -346,7 +346,7 @@ class ApplicationTest(models.Model):
 
     class Meta:
         db_table = 'src_application_test'
-        managed = False
+        managed = True
         verbose_name = 'Application (test)'
         verbose_name_plural = 'Applications (test)'
 
@@ -391,7 +391,7 @@ class Bureau(models.Model):
 
     class Meta:
         db_table = 'src_bureau'
-        managed = False
+        managed = True
 
 
 # ---------------------------------------------------------------------------
@@ -420,7 +420,7 @@ class BureauBalance(models.Model):
 
     class Meta:
         db_table = 'src_bureau_balance'
-        managed = False
+        managed = True
         unique_together = [('sk_id_bureau', 'months_balance')]
 
 
@@ -477,7 +477,7 @@ class PreviousApplication(models.Model):
 
     class Meta:
         db_table = 'src_previous_application'
-        managed = False
+        managed = True
 
 
 # ---------------------------------------------------------------------------
@@ -511,7 +511,7 @@ class InstallmentsPayments(models.Model):
 
     class Meta:
         db_table = 'src_installments_payments'
-        managed = False
+        managed = True
         unique_together = [
             ('sk_id_prev', 'num_instalment_version', 'num_instalment_number'),
         ]
@@ -562,7 +562,7 @@ class CreditCardBalance(models.Model):
 
     class Meta:
         db_table = 'src_credit_card_balance'
-        managed = False
+        managed = True
         unique_together = [('sk_id_prev', 'months_balance')]
 
 
@@ -603,7 +603,7 @@ class PosCashBalance(models.Model):
 
     class Meta:
         db_table = 'src_pos_cash_balance'
-        managed = False
+        managed = True
         unique_together = [('sk_id_prev', 'months_balance')]
 
 

@@ -1,11 +1,89 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Главная (_new)</title></head>
-<body>
-<h1>Кредитный скоринг (_new)</h1>
-<p>Заявок: {{ total_applications }}, клиентов: {{ total_clients }}, со скорингом: {{ scored_applications }}</p>
-<p><a href="{% url 'credit_new:applications-list' %}">Список заявок</a> |
-   <a href="{% url 'credit_new:csv-import' %}">Импорт CSV</a> |
-   <a href="{% url 'credit_new:health' %}">Health</a></p>
-</body>
-</html>
+{% extends "base_new.html" %}
+
+{% block title %}Главная — Home Credit{% endblock %}
+
+{% block page_content %}
+<h2>Добро пожаловать в систему кредитного скоринга</h2>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_applications }}</div>
+        <div class="stat-label">Всего заявок</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total_clients }}</div>
+        <div class="stat-label">Клиентов</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ scored_applications }}</div>
+        <div class="stat-label">Оценено</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">О системе (Home Credit)</h3>
+    </div>
+    <p>Загрузка банковских CSV, staging в PostgreSQL и ETL в Data Vault (Greenplum).</p>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li><strong>Импорт CSV:</strong> выгрузки Kaggle / АБС в staging-таблицы</li>
+        <li><strong>ETL:</strong> очистка мусорных полей → Data Vault 2.0</li>
+        <li><strong>ML и агент:</strong> скоринг и объяснения по заявкам</li>
+    </ul>
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <p style="margin-bottom: 15px;">Быстрые действия:</p>
+    <a href="{% url 'credit_new:csv-import' %}">
+        <button>📥 Импорт CSV</button>
+    </a>
+    <a href="{% url 'credit_new:applications-create' %}">
+        <button class="btn-secondary">➕ Новая заявка</button>
+    </a>
+    <a href="{% url 'credit_new:applications-list' %}">
+        <button class="btn-secondary">📋 Заявки</button>
+    </a>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <div class="card-header">
+        <h3 class="card-title">Последние заявки</h3>
+    </div>
+    {% if recent_applications %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in recent_applications %}
+                <tr>
+                    <td>#{{ app.id }}</td>
+                    <td>{{ app.app_date|date:"d.m.Y" }}</td>
+                    <td>
+                        {% if app.scoring %}
+                            <span class="badge badge-success">✓ Оценена</span>
+                        {% else %}
+                            <span class="badge badge-pending">⏳ На рассмотрении</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'credit_new:applications-detail' application_id=app.id %}">Подробнее →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; padding: 20px; color: #999;">
+            Нет заявок.
+            <a href="{% url 'credit_new:applications-create' %}">Создайте первую</a>
+            или <a href="{% url 'credit_new:csv-import' %}">загрузите CSV</a>.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

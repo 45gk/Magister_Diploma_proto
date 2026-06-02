@@ -1,15 +1,148 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Заявка #{{ application.id }} (_new)</title></head>
-<body>
-<h1>Заявка #{{ application.id }} (_new)</h1>
-<p>Дата: {{ application.app_date }}, клиент: {{ application.client_id }}</p>
-<form method="post" action="{% url 'credit_new:applications-score' application_id=application.id %}">{% csrf_token %}
-  <button type="submit">Скоринг</button>
+{% extends "base_new.html" %}
+
+{% block title %}Детали заявки #{{ application.id }}{% endblock %}
+
+{% block page_content %}
+<h2>Заявка #{{ application.id }}</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'credit_new:applications-list' %}">
+        <button type="button" class="btn-secondary">← Назад к списку</button>
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Основная информация</h3>
+    </div>
+    <div class="form-row">
+        <div><strong>ID заявки:</strong> #{{ application.id }}</div>
+        <div><strong>Дата подачи:</strong> {{ application.app_date|date:"d.m.Y" }}</div>
+        <div>
+            <strong>Статус:</strong>
+            {% if application.scoring %}
+                <span class="badge badge-success">✓ Оценена</span>
+            {% else %}
+                <span class="badge badge-pending">⏳ На рассмотрении</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Информация о клиенте</h3>
+    </div>
+    <div class="form-row">
+        <div><strong>Образование:</strong> {{ application.client.education|default:"-" }}</div>
+        <div>
+            <strong>Пол:</strong>
+            {% if application.client.sex == "M" %}Мужчина
+            {% elif application.client.sex == "F" %}Женщина
+            {% else %}-{% endif %}
+        </div>
+        <div><strong>Возраст:</strong> {{ application.client.age|default:"-" }} лет</div>
+    </div>
+    <div class="form-row" style="margin-top: 15px;">
+        <div><strong>Доход:</strong> {{ application.client.income|default:"-" }} руб.</div>
+        <div>
+            <strong>Автомобиль:</strong>
+            {% if application.client.car %}✓ Да{% else %}Нет{% endif %}
+        </div>
+        <div>
+            <strong>Загранпаспорт:</strong>
+            {% if application.client.foreign_passport %}✓ Да{% else %}Нет{% endif %}
+        </div>
+    </div>
+</div>
+
+{% if application.client.financial_profiles.exists %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Финансовый профиль</h3>
+    </div>
+    {% with profile=application.client.financial_profiles.first %}
+    <div class="form-row">
+        <div><strong>Отклонённые заявки:</strong> {{ profile.decline_app_cnt }}</div>
+        <div><strong>Хорошее место работы:</strong> {% if profile.good_work %}Да{% else %}Нет{% endif %}</div>
+        <div><strong>Запросы БКИ:</strong> {{ profile.bki_request_cnt }}</div>
+        <div><strong>Рейтинг региона:</strong> {{ profile.region_rating|default:"-" }}</div>
+    </div>
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if application.client.behavioral_contexts.exists %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Поведенческий контекст</h3>
+    </div>
+    {% with ctx=application.client.behavioral_contexts.first %}
+    <div class="form-row">
+        <div style="grid-column: 1 / -1;"><strong>Адрес проживания:</strong> {{ ctx.home_address|default:"-" }}</div>
+    </div>
+    <div class="form-row">
+        <div style="grid-column: 1 / -1;"><strong>Адрес работы:</strong> {{ ctx.work_address|default:"-" }}</div>
+    </div>
+    <div class="form-row">
+        <div><strong>SNA:</strong> {{ ctx.sna|default:"-" }}</div>
+        <div><strong>Первая заявка:</strong> {% if ctx.first_time %}Да{% else %}Нет{% endif %}</div>
+    </div>
+    {% endwith %}
+</div>
+{% endif %}
+
+{% if application.scoring %}
+<div class="card" style="border-left: 4px solid #28a745;">
+    <div class="card-header" style="background: #28a745;">
+        <h3 class="card-title">Результаты скоринга</h3>
+    </div>
+    <div class="form-row">
+        <div>
+            <strong>Вероятность дефолта:</strong>
+            <span style="font-size: 24px; font-weight: bold; color: #667eea;">
+                {{ application.scoring.default_probability|floatformat:2 }}%
+            </span>
+        </div>
+        <div><strong>Уверенность:</strong> {{ application.scoring.confidence|floatformat:2 }}</div>
+        <div><strong>Модель:</strong> {{ application.scoring.model_version }}</div>
+        <div><strong>Дата:</strong> {{ application.scoring.generated_at|date:"d.m.Y H:i" }}</div>
+    </div>
+</div>
+
+{% if application.agent_explanation %}
+<div class="card">
+    <div class="card-header" style="background: #764ba2;">
+        <h3 class="card-title">🤖 Объяснение AI-агента</h3>
+    </div>
+    <p>{{ application.agent_explanation.explanation|linebreaks }}</p>
+    <p style="font-size: 12px; color: #999; margin-top: 10px;">
+        {{ application.agent_explanation.generated_at|date:"d.m.Y H:i" }}
+    </p>
+</div>
+{% else %}
+<div class="alert alert-info">
+    Запустите агента после скоринга, чтобы получить объяснение.
+</div>
+<form method="post" action="{% url 'credit_new:applications-recommend' application_id=application.id %}" style="text-align: center; margin-top: 16px;">
+    {% csrf_token %}
+    <button type="submit" style="background: #764ba2;">💡 Получить объяснение агента</button>
 </form>
-<form method="post" action="{% url 'credit_new:applications-recommend' application_id=application.id %}">{% csrf_token %}
-  <button type="submit">Объяснение агента</button>
+{% endif %}
+
+{% else %}
+<div class="alert alert-warning">
+    ⚠ Заявка ещё не прошла скоринг.
+</div>
+<form method="post" action="{% url 'credit_new:applications-score' application_id=application.id %}" style="text-align: center; margin-top: 16px;">
+    {% csrf_token %}
+    <button type="submit" style="background: #28a745;">🎯 Провести скоринг</button>
 </form>
-<p><a href="{% url 'credit_new:applications-list' %}">Назад</a></p>
-</body>
-</html>
+{% endif %}
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{% url 'credit_new:applications-list' %}">
+        <button type="button" class="btn-secondary">← Назад к списку</button>
+    </a>
+</div>
+{% endblock %}

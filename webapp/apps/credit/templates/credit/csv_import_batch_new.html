@@ -1,19 +1,42 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Пакетный импорт (_new)</title></head>
-<body>
-<h1>Пакетная загрузка каталога</h1>
-<table border="1" cellpadding="4">
-  <tr><th>Dataset</th><th>Строк</th><th>OK</th><th>Ошибки</th></tr>
-  {% for s in summaries %}
-  <tr>
-    <td>{{ s.dataset }}</td>
-    <td>{{ s.row_count }}</td>
-    <td>{{ s.ok }}</td>
-    <td>{{ s.errors|join:", " }}</td>
-  </tr>
-  {% endfor %}
-</table>
-<p><a href="{% url 'credit_new:csv-import' %}">Назад</a></p>
-</body>
-</html>
+{% extends "base_new.html" %}
+
+{% block title %}Пакетный импорт{% endblock %}
+
+{% block page_content %}
+<h2>Пакетная загрузка каталога</h2>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Dataset</th>
+                <th>Строк</th>
+                <th>OK</th>
+                <th>Ошибки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in summaries %}
+            <tr>
+                <td>{{ s.dataset }}</td>
+                <td>{{ s.row_count }}</td>
+                <td>
+                    {% if s.ok %}
+                        <span class="badge badge-success">✓</span>
+                    {% else %}
+                        <span class="badge badge-danger">✗</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.errors|join:", "|default:"—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="text-align: center; margin-top: 24px;">
+    <a href="{% url 'credit_new:csv-import' %}">
+        <button type="button">← К импорту</button>
+    </a>
+</div>
+{% endblock %}

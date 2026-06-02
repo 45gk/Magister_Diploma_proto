@@ -1,34 +1,56 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Импорт CSV (_new)</title></head>
-<body>
-<h1>Загрузка банковских CSV (_new)</h1>
-<p>Home Credit / models_1. Мусорные поля ETL можно симулировать и сразу отбрасывать.</p>
+{% extends "base_new.html" %}
 
-<h2>Один файл</h2>
-<form method="post" action="{% url 'credit_new:csv-upload' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-  <label>Тип выгрузки:
-    <select name="dataset_key" required>
-      {% for ds in datasets %}
-        <option value="{{ ds.key }}">{{ ds.key }} ({{ ds.filename }})</option>
-      {% endfor %}
-    </select>
-  </label><br><br>
-  <label>CSV: <input type="file" name="csv_file" accept=".csv" required></label><br><br>
-  <label><input type="checkbox" name="strip_junk" checked> Убрать мусорные поля ETL</label><br>
-  <label><input type="checkbox" name="enrich_junk"> Добавить мусор (симуляция АБС)</label><br>
-  <label>Лимит строк: <input type="number" name="limit" min="1" placeholder="все"></label><br><br>
-  <button type="submit">Загрузить</button>
-</form>
+{% block title %}Импорт CSV{% endblock %}
 
-<h2>Каталог (dev)</h2>
-<form method="post" action="{% url 'credit_new:csv-directory' %}">
-  {% csrf_token %}
-  <label>Путь: <input type="text" name="directory" size="60" placeholder="C:/data/home_credit"></label>
-  <button type="submit">Загрузить каталог (по 100 строк / файл)</button>
-</form>
+{% block page_content %}
+<h2>Загрузка банковских CSV</h2>
+<p style="color: #666; margin-bottom: 24px;">
+    Home Credit / staging PostgreSQL. Мусорные поля ETL можно симулировать и сразу отбрасывать при загрузке.
+</p>
 
-<p><a href="{% url 'credit_new:index' %}">На главную</a></p>
-</body>
-</html>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Один файл</h3>
+    </div>
+    <form method="post" action="{% url 'credit_new:csv-upload' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="dataset_key">Тип выгрузки</label>
+            <select name="dataset_key" id="dataset_key" required>
+                {% for ds in datasets %}
+                <option value="{{ ds.key }}">{{ ds.key }} — {{ ds.filename }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="csv_file">Файл CSV</label>
+            <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
+        </div>
+        <div class="form-group">
+            <label><input type="checkbox" name="strip_junk" checked> Убрать мусорные поля ETL</label>
+        </div>
+        <div class="form-group">
+            <label><input type="checkbox" name="enrich_junk"> Добавить мусор (симуляция АБС)</label>
+        </div>
+        <div class="form-group">
+            <label for="limit">Лимит строк (пусто = все)</label>
+            <input type="number" name="limit" id="limit" min="1" placeholder="например 1000">
+        </div>
+        <button type="submit">📥 Загрузить в staging</button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Каталог (dev)</h3>
+    </div>
+    <form method="post" action="{% url 'credit_new:csv-directory' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="directory">Путь к папке с Kaggle CSV</label>
+            <input type="text" name="directory" id="directory" placeholder="/opt/airflow/data/home_credit">
+        </div>
+        <button type="submit" class="btn-secondary">Загрузить каталог (до 100 строк / файл)</button>
+    </form>
+</div>
+{% endblock %}

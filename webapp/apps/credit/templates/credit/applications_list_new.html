@@ -1,15 +1,67 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Заявки (_new)</title></head>
-<body>
-<h1>Заявки (_new)</h1>
-<ul>
-{% for app in applications %}
-  <li><a href="{% url 'credit_new:applications-detail' application_id=app.id %}">#{{ app.id }}</a> — {{ app.app_date }}</li>
-{% empty %}
-  <li>Нет заявок</li>
-{% endfor %}
-</ul>
-<p><a href="{% url 'credit_new:applications-create' %}">Создать</a> | <a href="{% url 'credit_new:index' %}">Назад</a></p>
-</body>
-</html>
+{% extends "base_new.html" %}
+
+{% block title %}Список заявок{% endblock %}
+
+{% block page_content %}
+<h2>Список кредитных заявок</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'credit_new:applications-create' %}">
+        <button>➕ Новая заявка</button>
+    </a>
+    <a href="{% url 'credit_new:csv-import' %}">
+        <button class="btn-secondary">📥 Импорт CSV</button>
+    </a>
+</div>
+
+{% if applications %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Дата подачи</th>
+                <th>Возраст</th>
+                <th>Доход</th>
+                <th>Статус</th>
+                <th>Вероятность дефолта</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>#{{ application.id }}</td>
+                <td>{{ application.app_date|date:"d.m.Y" }}</td>
+                <td>{{ application.client.age|default:"-" }}</td>
+                <td>{{ application.client.income|default:"-" }} руб.</td>
+                <td>
+                    {% if application.scoring %}
+                        <span class="badge badge-success">✓ Оценена</span>
+                    {% else %}
+                        <span class="badge badge-pending">⏳ Ожидает</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if application.scoring %}
+                        <strong>{{ application.scoring.default_probability|floatformat:2 }}%</strong>
+                    {% else %}
+                        <span style="color: #999;">-</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'credit_new:applications-detail' application_id=application.id %}">Подробнее</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="card">
+        <p style="text-align: center; color: #999; padding: 30px;">
+            Нет заявок.
+            <a href="{% url 'credit_new:applications-create' %}">Создайте новую</a>
+            или <a href="{% url 'credit_new:csv-import' %}">импортируйте CSV</a>.
+        </p>
+    </div>
+{% endif %}
+{% endblock %}

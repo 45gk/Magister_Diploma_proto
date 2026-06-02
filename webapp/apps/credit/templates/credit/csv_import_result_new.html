@@ -1,17 +1,52 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Результат импорта (_new)</title></head>
-<body>
-<h1>Результат: {{ result.dataset }}</h1>
-<p>Источник: {{ result.source_name }}</p>
-<p>Строк: {{ result.row_count }} | OK: {{ result.ok }} | junk stripped: {{ result.junk_fields_stripped }}</p>
-{% if result.errors %}
-  <ul style="color:red;">{% for e in result.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+{% extends "base_new.html" %}
+
+{% block title %}Результат импорта{% endblock %}
+
+{% block page_content %}
+<h2>Результат импорта</h2>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{{ result.dataset }}</h3>
+    </div>
+    <div class="form-row">
+        <div><strong>Источник:</strong> {{ result.source_name|default:"—" }}</div>
+        <div><strong>Строк:</strong> {{ result.row_count }}</div>
+        <div>
+            <strong>Статус:</strong>
+            {% if result.ok %}
+                <span class="badge badge-success">OK</span>
+            {% else %}
+                <span class="badge badge-danger">Ошибка</span>
+            {% endif %}
+        </div>
+        <div>
+            <strong>Мусор убран:</strong>
+            {% if result.junk_fields_stripped %}Да{% else %}Нет{% endif %}
+        </div>
+    </div>
+    {% if result.errors %}
+    <div class="alert alert-error" style="margin-top: 16px;">
+        {% for e in result.errors %}<p>{{ e }}</p>{% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+{% if preview_rows %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Превью (первые строки)</h3>
+    </div>
+    <pre class="preview-json">{{ preview_rows }}</pre>
+</div>
 {% endif %}
 
-<h2>Превью (до 5 строк)</h2>
-<pre>{{ preview_rows }}</pre>
-
-<p><a href="{% url 'credit_new:csv-import' %}">Ещё файл</a></p>
-</body>
-</html>
+<div style="text-align: center; margin-top: 24px;">
+    <a href="{% url 'credit_new:csv-import' %}">
+        <button type="button">📥 Ещё файл</button>
+    </a>
+    <a href="{% url 'credit_new:index' %}">
+        <button type="button" class="btn-secondary">На главную</button>
+    </a>
+</div>
+{% endblock %}

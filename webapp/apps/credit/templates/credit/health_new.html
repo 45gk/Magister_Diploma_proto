@@ -1,14 +1,64 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head><meta charset="utf-8"><title>Health (_new)</title></head>
-<body>
-<h1>Health check (_new)</h1>
-<ul>
-  <li>Web: {{ health.web }}</li>
-  <li>DB: {{ health.database }}</li>
-  <li>ML: {{ health.ml_service }}</li>
-  <li>Agent: {{ health.agent_service }}</li>
-</ul>
-<p><a href="{% url 'credit_new:index' %}">Назад</a></p>
-</body>
-</html>
+{% extends "base_new.html" %}
+
+{% block title %}Статус системы{% endblock %}
+
+{% block page_content %}
+<h2>Статус системы</h2>
+
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value">{% if health.web %}✓{% else %}✗{% endif %}</div>
+        <div class="stat-label">Web API</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{% if health.database %}✓{% else %}✗{% endif %}</div>
+        <div class="stat-label">База данных</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{% if health.ml_service %}✓{% else %}✗{% endif %}</div>
+        <div class="stat-label">ML Service</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{% if health.agent_service %}✓{% else %}✗{% endif %}</div>
+        <div class="stat-label">Agent Service</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Детали</h3>
+    </div>
+    <div style="margin-bottom: 16px;">
+        <strong>Web API:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.web %}<span style="color: #28a745;">✓ Работает</span>
+            {% else %}<span style="color: #dc3545;">✗ Недоступно</span>{% endif %}
+        </p>
+    </div>
+    <div style="margin-bottom: 16px;">
+        <strong>PostgreSQL (staging):</strong>
+        <p style="margin-top: 5px;">
+            {% if health.database %}<span style="color: #28a745;">✓ Работает</span>
+            {% else %}<span style="color: #dc3545;">✗ Недоступна</span>{% endif %}
+        </p>
+    </div>
+    <div style="margin-bottom: 16px;">
+        <strong>ML Service:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.ml_service %}<span style="color: #28a745;">✓ Работает</span>
+            {% else %}<span style="color: #dc3545;">✗ Недоступен</span>{% endif %}
+        </p>
+    </div>
+    <div>
+        <strong>Agent Service:</strong>
+        <p style="margin-top: 5px;">
+            {% if health.agent_service %}<span style="color: #28a745;">✓ Работает</span>
+            {% else %}<span style="color: #dc3545;">✗ Недоступен</span>{% endif %}
+        </p>
+    </div>
+</div>
+
+<div style="margin-top: 20px; text-align: center;">
+    <button type="button" class="btn-secondary" onclick="location.reload()">🔄 Обновить</button>
+</div>
+{% endblock %}
