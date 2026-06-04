@@ -134,14 +134,12 @@ services:
     env_file: .env
     ports:
       - "8001:8001"
-
   agentservice:
     build:
       context: ./agentservice
     env_file: .env
     ports:
       - "8002:8002"
-
   # spark-master:
   #   image: apache/spark:3.4.1
   #   entrypoint: /opt/spark/bin/spark-class

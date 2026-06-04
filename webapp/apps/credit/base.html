@@ -346,7 +346,10 @@
         <header>
             <h1>🏦 Кредитный скоринг</h1>
             <nav>
-
+                <a href="{% url 'credit:index' %}">Главная</a>
+                <a href="{% url 'credit:applications-list' %}">Мои заявки</a>
+                <a href="{% url 'credit:applications-create' %}">Новая заявка</a>
+                <a href="{% url 'credit:health' %}">Статус</a>
             </nav>
         </header>
         

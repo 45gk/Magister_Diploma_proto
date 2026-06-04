@@ -67,12 +67,12 @@
 
 <div class="subnav-card">
     <nav>
-        <a href="{% url 'credit_new:index' %}">Главная</a>
-        <a href="{% url 'credit_new:applications-list' %}">Заявки</a>
-        <a href="{% url 'credit_new:applications-create' %}">Новая заявка</a>
-        <a href="{% url 'credit_new:csv-import' %}">Импорт CSV</a>
-        <a href="{% url 'credit_new:health' %}">Статус</a>
-        <a href="/admin/" style="opacity: 0.75;">Админка</a>
+        {% comment %} <a href="{% url 'index' %}">Главная</a>
+        <a href="{% url 'applications-list' %}">Заявки</a>
+        <a href="{% url 'applications-create' %}">Новая заявка</a>
+        <a href="{% url 'csv-import' %}">Импорт CSV</a>
+        <a href="{% url 'health' %}">Статус</a>
+        <a href="/admin/" style="opacity: 0.75;">Админка</a> {% endcomment %}
     </nav>
 </div>
 
